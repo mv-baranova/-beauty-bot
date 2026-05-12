@@ -1,7 +1,0 @@
-{
-  "name": "beauty-bot",
-  "version": "1.0.0",
-  "dependencies": {
-    "grammy": "^1.21.1"
-  }
-}
