@@ -21,7 +21,7 @@ let genAI;
 let model;
 try {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  model = genAI.getGenerativeModel({ model: `gemini-1.5-flash` });
+  model = genAI.getGenerativeModel({ model: `gemini-2.5-flash` });
 } catch (error) {
   console.error(`ERROR: Failed to initialize Gemini AI:`, error);
 }
