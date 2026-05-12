@@ -31,15 +31,34 @@ Telegram AI бьюти-стилист на базе Node.js, grammY и Google Ge
    npm start
    ```
 
-## Деплой на Render
+## Деплой
 
+### На Render
 1. Создайте новый "Web Service" на [Render](https://render.com/).
 2. Подключите ваш GitHub репозиторий.
 3. Выберите среду выполнения **Node**.
 4. В разделе **Environment Variables** добавьте:
    - `BOT_TOKEN`
    - `GEMINI_API_KEY`
-5. Нажмите "Deploy".
+
+### На Railway
+1. Создайте новый проект на [Railway](https://railway.app/).
+2. Подключите GitHub репозиторий.
+3. Добавьте переменные окружения в разделе **Variables**.
+
+## Troubleshooting (Решение проблем)
+
+### Проверка логов
+- **Railway:** Перейдите во вкладку **Logs** в вашем сервисе.
+- **Render:** Перейдите во вкладку **Events** или **Logs** в панели управления сервисом.
+
+### Частые ошибки
+- **BOT_TOKEN is missing:** Вы не добавили `BOT_TOKEN` в переменные окружения.
+- **GEMINI_API_KEY is missing:** Вы не добавили `GEMINI_API_KEY` в переменные окружения.
+- **Error: 401 Unauthorized (Telegram):** Неправильный `BOT_TOKEN`. Перевыпустите его в BotFather.
+- **Error: 403 Forbidden (Gemini):** Неправильный `GEMINI_API_KEY` или у вашего аккаунта нет доступа к API.
+- **Error: 429 Too Many Requests (Gemini):** Вы превысили квоту бесплатных запросов. Подождите немного или используйте другой API-ключ.
+- **Safety Error (Gemini):** Gemini заблокировал запрос из-за политики безопасности (например, если фото показалось системе недопустимым).
 
 ## Переменные окружения
 - `BOT_TOKEN` — токен вашего бота от BotFather.
