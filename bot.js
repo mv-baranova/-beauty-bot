@@ -21,7 +21,9 @@ let genAI;
 let model;
 try {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  model = genAI.getGenerativeModel({ model: `gemini-2.5-flash` });
+  model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+  });
 } catch (error) {
   console.error(`ERROR: Failed to initialize Gemini AI:`, error);
 }
@@ -128,7 +130,7 @@ bot.on(`message:photo`, async (ctx) => {
       } else if (error.message.includes(`quota`)) {
         errorMessage += `Превышена квота запросов к API. Попробуй позже.`;
       } else {
-        errorMessage += `Произошла техническая ошибка при обращении к AI.`;
+        errorMessage += `Произошла техническая ошибка при обращении к AI. Модель: gemini-2.5-flash.`;
       }
       await ctx.reply(errorMessage);
     }
@@ -166,7 +168,7 @@ bot.on(`message:text`, async (ctx) => {
       if (error.message.includes(`quota`)) {
         errorMessage += `Превышена квота запросов к API. Попробуй позже.`;
       } else {
-        errorMessage += `Произошла ошибка при обращении к AI.`;
+        errorMessage += `Произошла ошибка при обращении к AI. Модель: gemini-2.5-flash.`;
       }
       await ctx.reply(errorMessage);
     }
