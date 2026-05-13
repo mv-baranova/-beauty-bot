@@ -28,14 +28,14 @@ bot.on('pre_checkout_query', async (ctx) => {
 });
 
 bot.on('message:successful_payment', async (ctx) => {
-  const statusMsg = await ctx.reply('оплата прошла! готовлю твой премиум образ... 💎');
+  const statusMsg = await ctx.reply('оплата прошла. готовлю твой премиум образ... 💎');
   try {
-    const response = await generateTextResponse(PREMIUM_LOOK_PROMPT, true); // true for complex/flash model
+    const response = await generateTextResponse(PREMIUM_LOOK_PROMPT, true);
     await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
     await ctx.reply(response);
   } catch (error) {
     console.error('Successful Payment Handler Error:', error);
-    await ctx.reply('оплата прошла, но я запнулась при создании образа 😭 напиши в поддержку или попробуй нажать на любую кнопку.');
+    await ctx.reply('оплата прошла, но я запнулась при создании образа 😭 напиши в поддержку или попробуй еще раз.');
   }
 });
 

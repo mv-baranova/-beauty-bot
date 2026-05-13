@@ -42,7 +42,7 @@ const photoHandler = async (ctx) => {
     if (error.stack) console.error('Stack trace:', error.stack);
     console.error('---------------------------');
 
-    const errorText = 'фото не прочиталось 😭 попробуй другое — лучше светлее и без сильного сжатия';
+    const errorText = 'фото не прочиталось 😭\nпопробуй другое, лучше при дневном свете';
 
     if (statusMsg) {
       try {

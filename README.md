@@ -2,7 +2,7 @@
 
 Telegram AI бьюти-стилист на базе Node.js, grammY и Google Gemini.
 
-Мари — твоя стильная подруга, которая поможет тебе найти свой вайб, разберет ошибки стиля и заглянет в звезды.
+Мари — твоя стильная подруга, которая поможет тебе найти свой вайб, разберет ошибки стиля и подскажет идеальную палитру.
 
 ## Возможности
 
@@ -10,10 +10,9 @@ Telegram AI бьюти-стилист на базе Node.js, grammY и Google Ge
 - 👗 **Собрать образ**: Идеи для твоего настроения.
 - 🎨 **Цвета**: Твоя палитра и почему она работает.
 - 💄 **Макияж**: Советы по бьюти-образу.
-- 🔮 **Астрология**: Развлекательный разбор стиля по дате рождения.
-- 🧬 **Матрица судьбы**: Нумерологический вайб-разбор.
-- 🛍️ **Подбор с WB**: Помощь в поиске вещей на Wildberries.
-- 💎 **Платный образ**: Расширенный подбор за Telegram Stars.
+- 🖤 **Pinterest vibe**: Эстетика твоего стиля.
+- 🎀 **Что мне не идет**: Честный разбор ошибок.
+- ☕ **Fashion roast**: Ироничный взгляд на гардероб.
 
 ## Как настроить
 
@@ -23,7 +22,7 @@ Telegram AI бьюти-стилист на базе Node.js, grammY и Google Ge
 
 ### 2. Получение Gemini API Key
 1. Перейдите в [Google AI Studio](https://aistudio.google.com/).
-2. Получите API key.
+2. Получите API key для модели `gemini-2.5-flash`.
 
 ## Локальный запуск
 
@@ -31,10 +30,6 @@ Telegram AI бьюти-стилист на базе Node.js, grammY и Google Ge
 2. Создайте `.env` (см. `.env.example`).
 3. `npm install`
 4. `npm start`
-
-## TODO
-- [ ] future: image generation / virtual try-on via Gemini image model or other image API.
-- [ ] future: integrate Wildberries API or affiliate/product feed if available.
 
 ## Troubleshooting
 

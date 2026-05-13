@@ -1,9 +1,11 @@
 const { generateTextResponse } = require('../services/gemini.service');
-const { BUTTONS, mainKeyboard, startHandler } = require('./menu.handler');
+const { BUTTONS, startHandler } = require('./menu.handler');
 const { ASTROLOGY_PROMPT, MATRIX_PROMPT, WB_SEARCH_PROMPT, PREMIUM_LOOK_PROMPT, MODES_PROMPTS } = require('../prompts/stylist');
 const { getSession, resetSession } = require('../utils/session');
 
 const textHandler = async (ctx) => {
+  if (!ctx.message || !ctx.message.text) return;
+
   const userId = ctx.from.id;
   const session = getSession(userId);
   const text = ctx.message.text;
@@ -27,17 +29,17 @@ const textHandler = async (ctx) => {
   if (text === BUTTONS.ASTROLOGY || session.state.startsWith('astro_')) {
     if (text === BUTTONS.ASTROLOGY) {
       session.state = 'astro_date';
-      return await ctx.reply('напиши свою дату рождения (например, 01.01.1990) 🗓️');
+      return await ctx.reply('напиши дату рождения (например, 01.01.1990) 🗓️');
     }
     if (session.state === 'astro_date') {
       session.data.birthDate = text;
       session.state = 'astro_time';
-      return await ctx.reply('а теперь время рождения (если знаешь, например, 14:30) ⏰');
+      return await ctx.reply('время рождения? ⏰');
     }
     if (session.state === 'astro_time') {
       session.data.birthTime = text;
       session.state = 'astro_city';
-      return await ctx.reply('и город рождения 🏙️');
+      return await ctx.reply('город рождения? 🏙️');
     }
     if (session.state === 'astro_city') {
       session.data.birthCity = text;
@@ -45,7 +47,7 @@ const textHandler = async (ctx) => {
       session.state = 'idle';
 
       const statusMsg = await ctx.reply('смотрю в звезды... ✨');
-      const response = await generateTextResponse(`${ASTROLOGY_PROMPT}\nДанные пользователя: ${userContext}`);
+      const response = await generateTextResponse(`${ASTROLOGY_PROMPT}\nДанные: ${userContext}`);
       await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
       return await ctx.reply(response);
     }
@@ -55,11 +57,11 @@ const textHandler = async (ctx) => {
   if (text === BUTTONS.MATRIX || session.state === 'matrix_date') {
     if (text === BUTTONS.MATRIX) {
       session.state = 'matrix_date';
-      return await ctx.reply('напиши свою дату рождения в формате ДД.ММ.ГГГГ 🧬');
+      return await ctx.reply('напиши дату рождения ДД.ММ.ГГГГ 🧬');
     }
     if (session.state === 'matrix_date') {
       session.state = 'idle';
-      const statusMsg = await ctx.reply('считаю твою энергию... 🧬');
+      const statusMsg = await ctx.reply('считаю энергию... 🧬');
       const response = await generateTextResponse(`${MATRIX_PROMPT}\nДата: ${text}`);
       await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
       return await ctx.reply(response);
@@ -70,24 +72,24 @@ const textHandler = async (ctx) => {
   if (text === BUTTONS.WB_SHOPPING || session.state.startsWith('wb_')) {
     if (text === BUTTONS.WB_SHOPPING) {
       session.state = 'wb_item';
-      return await ctx.reply('что ищем? (платье, жакет, джинсы...) 🛍️');
+      return await ctx.reply('что ищем? 🛍️');
     }
     if (session.state === 'wb_item') {
       session.data.wbItem = text;
       session.state = 'wb_budget';
-      return await ctx.reply('какой бюджет? 💸');
+      return await ctx.reply('бюджет? 💸');
     }
     if (session.state === 'wb_budget') {
       session.data.wbBudget = text;
       session.state = 'wb_style';
-      return await ctx.reply('какой стиль? (casual, оверсайз, классика...) ✨');
+      return await ctx.reply('стиль? ✨');
     }
     if (session.state === 'wb_style') {
       session.data.wbStyle = text;
       const userContext = `Предмет: ${session.data.wbItem}, Бюджет: ${session.data.wbBudget}, Стиль: ${session.data.wbStyle}`;
       session.state = 'idle';
 
-      const statusMsg = await ctx.reply('ищу лучшие варианты... 🛍️');
+      const statusMsg = await ctx.reply('ищу варианты... 🛍️');
       const response = await generateTextResponse(`${WB_SEARCH_PROMPT}\nЗапрос: ${userContext}`);
       await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
       return await ctx.reply(response);
@@ -98,19 +100,17 @@ const textHandler = async (ctx) => {
   if (text === BUTTONS.PREMIUM_LOOK) {
     resetSession(userId);
     return await ctx.replyWithInvoice(
-      '💎 Премиум подбор от Мари',
+      '💎 Премиум подбор',
       'Расширенный подбор: образ + палитра + макияж + moodboard prompt + WB keywords.',
       'premium_look_payload',
-      '', // provider_token empty for Stars
+      '',
       'XTR',
-      [{ label: 'Premium Look', amount: 100 }] // 100 Stars example
+      [{ label: 'Premium Look', amount: 100 }]
     );
   }
 
-  // 8. Остальные кнопки и свободный текст
-  const buttonValues = Object.values(BUTTONS);
+  // 8. Свободный текст и остальные кнопки
   let statusMsg;
-
   try {
     statusMsg = await ctx.reply('собираю pinterest board ✨');
 
@@ -121,15 +121,14 @@ const textHandler = async (ctx) => {
     else if (text === BUTTONS.COLORS) prompt = MODES_PROMPTS.COLORS;
     else if (text === BUTTONS.MAKEUP) prompt = MODES_PROMPTS.MAKEUP;
 
-    // Если сессия была в каком-то состоянии, но пришел обычный текст - сбрасываем или обрабатываем как свободный запрос
     if (session.state !== 'idle') session.state = 'idle';
 
     const response = await generateTextResponse(prompt, complex);
-    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+    if (statusMsg) await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
     await ctx.reply(response);
   } catch (error) {
     console.error('Text Handler Error:', error);
-    const errorText = 'прости, я немного задумалась 😭\nповтори еще раз или нажми /start';
+    const errorText = 'прости, я немного задумалась 😭\nпопробуй еще раз';
     if (statusMsg) {
       try { await ctx.api.editMessageText(ctx.chat.id, statusMsg.message_id, errorText); }
       catch (e) { await ctx.reply(errorText); }

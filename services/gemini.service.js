@@ -58,18 +58,7 @@ async function analyzeImage(base64Data, mimeType = 'image/jpeg') {
   }
 }
 
-/**
- * Placeholder for virtual try-on feature.
- * Architecture preparation for Gemini 2.5 Flash Image or specialized API.
- * TODO: future feature: virtual try-on using Gemini 2.5 Flash Image or another image editing API.
- */
-async function virtualTryOn(imageBase64, itemToTryOn) {
-  console.log('Virtual try-on requested (not implemented yet)');
-  return null;
-}
-
 module.exports = {
   generateTextResponse,
   analyzeImage,
-  virtualTryOn,
 };
