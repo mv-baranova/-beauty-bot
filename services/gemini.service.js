@@ -4,7 +4,7 @@ const { SYSTEM_PROMPT, PHOTO_ANALYSIS_PROMPT } = require('../prompts/stylist');
 
 const genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: config.GEMINI_MODEL,
+  model: "gemini-2.5-flash",
   systemInstruction: SYSTEM_PROMPT,
 });
 

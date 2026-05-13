@@ -1,31 +1,36 @@
 const { Keyboard } = require('grammy');
 
 const BUTTONS = {
-  PHOTO: '✨ Анализ фото',
-  OUTFIT: '👗 Подобрать образ',
-  MAKEUP: '💄 Советы по макияжу',
-  STYLE: '🎨 Цвета и стиль',
-  ABOUT: 'ℹ️ О боте',
+  PHOTO_ANALYSIS: '📸 анализ фото',
+  BUILD_LOOK: '👗 собрать образ',
+  MAKEUP: '💄 макияж',
+  COLORS: '🎨 цвета',
+  PINTEREST_VIBE: '🖤 pinterest vibe',
+  WHAT_NOT_TO_WEAR: '🎀 что мне не идет',
+  FASHION_ROAST: '☕ fashion roast',
+  ABOUT: 'ℹ️ о боте',
 };
 
 const mainKeyboard = new Keyboard()
-  .text(BUTTONS.PHOTO).text(BUTTONS.OUTFIT)
+  .text(BUTTONS.PHOTO_ANALYSIS).text(BUTTONS.BUILD_LOOK)
   .row()
-  .text(BUTTONS.MAKEUP).text(BUTTONS.STYLE)
+  .text(BUTTONS.MAKEUP).text(BUTTONS.COLORS)
   .row()
-  .text(BUTTONS.ABOUT)
+  .text(BUTTONS.PINTEREST_VIBE).text(BUTTONS.WHAT_NOT_TO_WEAR)
+  .row()
+  .text(BUTTONS.FASHION_ROAST).text(BUTTONS.ABOUT)
   .resized();
 
 const startHandler = async (ctx) => {
   await ctx.reply(
-    `Привет, дорогая! ✨\n\nЯ Кира — твой персональный AI-стилист. Я помогу тебе найти свой уникальный образ, разберу твой стиль по фото или просто дам совет по макияжу.\n\nВыбери то, что тебя интересует сегодня, или просто отправь мне фото! 👗💄`,
+    `привет, дорогая ✨\n\nя кира, твоя подружка-стилист. скидывай фото для анализа или выбирай кнопку в меню 🤍`,
     { reply_markup: mainKeyboard }
   );
 };
 
 const aboutHandler = async (ctx) => {
   await ctx.reply(
-    `Я — твой проводник в мир высокой моды и красоты. 💎\n\nИспользуя технологии искусственного интеллекта, я анализирую тренды и твои индивидуальные особенности, чтобы создавать безупречные образы.\n\nПросто доверься моему вкусу! ✨`,
+    `я твой карманный стилист с pinterest вайбом ☁️\n\nпомогаю найти свой стиль, разобрать ошибки и просто поболтать о моде. всё анонимно и очень эстетично 🤍`,
     { reply_markup: mainKeyboard }
   );
 };
