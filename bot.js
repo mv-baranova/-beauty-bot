@@ -1,11 +1,19 @@
-const { Bot } = require('grammy');
+const { Bot, session } = require('grammy');
 const config = require('./config');
-const { startHandler, aboutHandler } = require('./handlers/menu.handler');
+const { createInitialSessionData } = require('./utils/session');
+const { startHandler, aboutHandler, restartHandler, BUTTONS } = require('./handlers/menu.handler');
 const { photoHandler } = require('./handlers/photo.handler');
 const { textHandler } = require('./handlers/text.handler');
+const { callbackHandler } = require('./handlers/callback.handler');
+const { astrologyHandler, matrixHandler } = require('./handlers/entertainment.handler');
+const { wbSearchHandler } = require('./handlers/shop.handler');
+const { premiumHandler } = require('./handlers/premium.handler');
 
 // Инициализация бота
 const bot = new Bot(config.BOT_TOKEN);
+
+// Настройка сессий
+bot.use(session({ initial: createInitialSessionData }));
 
 // Глобальная обработка ошибок для стабильности
 bot.catch((err) => {
@@ -18,7 +26,15 @@ bot.catch((err) => {
 bot.command('start', startHandler);
 
 // Регистрация текстовых кнопок
-bot.hears('ℹ️ о боте', aboutHandler);
+bot.hears(BUTTONS.ABOUT, aboutHandler);
+bot.hears(BUTTONS.RESTART, restartHandler);
+bot.hears(BUTTONS.ASTROLOGY, astrologyHandler);
+bot.hears(BUTTONS.MATRIX, matrixHandler);
+bot.hears(BUTTONS.WB_SEARCH, wbSearchHandler);
+bot.hears(BUTTONS.PREMIUM_LOOK, premiumHandler);
+
+// Обработка колбэков (инлайн кнопки)
+bot.on('callback_query:data', callbackHandler);
 
 // Обработка фото
 bot.on('message:photo', photoHandler);

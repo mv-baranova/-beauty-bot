@@ -1,6 +1,7 @@
 const { getFileAsBase64 } = require('../utils/image');
 const { analyzeImage } = require('../services/gemini.service');
 const config = require('../config');
+const keyboards = require('../utils/keyboards');
 
 const photoHandler = async (ctx) => {
   let statusMsg;
@@ -33,20 +34,29 @@ const photoHandler = async (ctx) => {
 
     const analysis = await analyzeImage(base64Data, mimeType);
 
-    // Delete status message and send analysis
+    // Save to history in session
+    ctx.session.history.push({
+      date: new Date().toISOString(),
+      analysis,
+      fileId,
+    });
+
+    // Limit history to 10 entries
+    if (ctx.session.history.length > 10) {
+      ctx.session.history.shift();
+    }
+
+    // Delete status message and send analysis with inline keyboard
     await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
-    await ctx.reply(analysis);
+    await ctx.reply(analysis, {
+      reply_markup: keyboards.postAnalysis,
+    });
   } catch (error) {
     console.error('--- PHOTO ANALYSIS ERROR ---');
-    console.error('Error name:', error.name);
     console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    if (error.response) {
-      console.error('Error response:', JSON.stringify(error.response, null, 2));
-    }
     console.error('---------------------------');
 
-    const errorText = 'фото не прочиталось 😭\nпопробуй другое, лучше при дневном свете';
+    const errorText = 'фото не прочиталось 😭\nпопробуй другое — лучше светлее и без сильного сжатия';
 
     if (statusMsg) {
       try {
