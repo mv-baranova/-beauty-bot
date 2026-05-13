@@ -38,15 +38,11 @@ const photoHandler = async (ctx) => {
     await ctx.reply(analysis);
   } catch (error) {
     console.error('--- PHOTO ANALYSIS ERROR ---');
-    console.error('Error name:', error.name);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    if (error.response) {
-      console.error('Error response:', JSON.stringify(error.response, null, 2));
-    }
+    console.error('Error details:', error);
+    if (error.stack) console.error('Stack trace:', error.stack);
     console.error('---------------------------');
 
-    const errorText = 'фото не прочиталось 😭\nпопробуй другое, лучше при дневном свете';
+    const errorText = 'фото не прочиталось 😭 попробуй другое — лучше светлее и без сильного сжатия';
 
     if (statusMsg) {
       try {

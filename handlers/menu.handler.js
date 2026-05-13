@@ -3,34 +3,38 @@ const { Keyboard } = require('grammy');
 const BUTTONS = {
   PHOTO_ANALYSIS: '📸 анализ фото',
   BUILD_LOOK: '👗 собрать образ',
-  MAKEUP: '💄 макияж',
   COLORS: '🎨 цвета',
+  MAKEUP: '💄 макияж',
+  WHAT_SUITS: '🪞 что мне идет',
+  NOT_TO_WEAR: '🚫 что не носить',
   PINTEREST_VIBE: '🖤 pinterest vibe',
-  WHAT_NOT_TO_WEAR: '🎀 что мне не идет',
-  FASHION_ROAST: '☕ fashion roast',
+  HONEST_REVIEW: '☕ честный разбор',
+  CAPSULE: '🛍️ капсула',
   ABOUT: 'ℹ️ о боте',
 };
 
 const mainKeyboard = new Keyboard()
   .text(BUTTONS.PHOTO_ANALYSIS).text(BUTTONS.BUILD_LOOK)
   .row()
-  .text(BUTTONS.MAKEUP).text(BUTTONS.COLORS)
+  .text(BUTTONS.COLORS).text(BUTTONS.MAKEUP)
   .row()
-  .text(BUTTONS.PINTEREST_VIBE).text(BUTTONS.WHAT_NOT_TO_WEAR)
+  .text(BUTTONS.WHAT_SUITS).text(BUTTONS.NOT_TO_WEAR)
   .row()
-  .text(BUTTONS.FASHION_ROAST).text(BUTTONS.ABOUT)
+  .text(BUTTONS.PINTEREST_VIBE).text(BUTTONS.HONEST_REVIEW)
+  .row()
+  .text(BUTTONS.CAPSULE).text(BUTTONS.ABOUT)
   .resized();
 
 const startHandler = async (ctx) => {
   await ctx.reply(
-    `привет, дорогая ✨\n\nя кира, твоя подружка-стилист. скидывай фото для анализа или выбирай кнопку в меню 🤍`,
+    `привет. я кира, твоя честная подруга-стилист.\n\nздесь без лишних восторгов: говорим по делу. кидай фото или выбирай режим в меню.`,
     { reply_markup: mainKeyboard }
   );
 };
 
 const aboutHandler = async (ctx) => {
   await ctx.reply(
-    `я твой карманный стилист с pinterest вайбом ☁️\n\nпомогаю найти свой стиль, разобрать ошибки и просто поболтать о моде. всё анонимно и очень эстетично 🤍`,
+    `стиль без цензуры и лишних эмодзи 🖤\n\nразбираю гардероб, подбираю цвета и честно говорю, что тебе не идет. использую gemini 2.5 flash для точности.`,
     { reply_markup: mainKeyboard }
   );
 };
