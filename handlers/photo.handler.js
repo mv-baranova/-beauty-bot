@@ -32,7 +32,7 @@ const photoHandler = async (ctx) => {
 
     await ctx.api.editMessageText(ctx.chat.id, statusMsg.message_id, 'думаю над образом…');
 
-    const analysis = await analyzeImage(base64Data, mimeType);
+    const analysis = await analyzeImage(base64Data, mimeType, ctx);
 
     // Save to history in session
     ctx.session.history.push({
