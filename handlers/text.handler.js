@@ -12,6 +12,34 @@ const textHandler = async (ctx) => {
     return await ctx.reply('жду твоё фото, красавица 📸\nлучше при дневном свете и в полный рост');
   }
 
+  // Если это кнопка "собрать образ"
+  if (text === BUTTONS.BUILD_LOOK) {
+    const { generateTextResponse } = require('../services/gemini.service');
+    const statusMsg = await ctx.reply('собираю pinterest board ✨');
+    const response = await generateTextResponse('собери мне полный образ на сегодня');
+    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+    const keyboards = require('../utils/keyboards');
+    return await ctx.reply(response, { reply_markup: keyboards.postVibe });
+  }
+
+  // Если это кнопка "цвета"
+  if (text === BUTTONS.COLORS) {
+    const { generateTextResponse } = require('../services/gemini.service');
+    const statusMsg = await ctx.reply('подбираю палитру 🎨');
+    const response = await generateTextResponse('какие цвета мне идут? расскажи про актуальные сочетания');
+    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+    return await ctx.reply(response);
+  }
+
+  // Если это кнопка "макияж"
+  if (text === BUTTONS.MAKEUP) {
+    const { generateTextResponse } = require('../services/gemini.service');
+    const statusMsg = await ctx.reply('рисую стрелки... 💄');
+    const response = await generateTextResponse('какой макияж сейчас в тренде? посоветуй под мой vibe');
+    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+    return await ctx.reply(response);
+  }
+
   const buttonValues = Object.values(BUTTONS);
   let statusMsg;
 

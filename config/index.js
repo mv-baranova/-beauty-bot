@@ -4,6 +4,7 @@ const config = {
   BOT_TOKEN: process.env.BOT_TOKEN,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   GEMINI_MODEL: "gemini-2.5-flash",
+  GEMINI_MODEL_LITE: "gemini-2.5-flash-lite",
 };
 
 // Простая валидация
