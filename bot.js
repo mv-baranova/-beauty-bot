@@ -18,7 +18,7 @@ bot.catch((err) => {
 bot.command('start', startHandler);
 
 // Регистрация текстовых кнопок
-bot.hears('ℹ️ О боте', aboutHandler);
+bot.hears('ℹ️ о боте', aboutHandler);
 
 // Обработка фото
 bot.on('message:photo', photoHandler);

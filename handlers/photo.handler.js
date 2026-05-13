@@ -3,22 +3,60 @@ const { analyzeImage } = require('../services/gemini.service');
 const config = require('../config');
 
 const photoHandler = async (ctx) => {
+  let statusMsg;
   try {
-    await ctx.reply('Вижу твое фото! Дай мне секунду, чтобы внимательно его изучить... ⏳✨');
+    statusMsg = await ctx.reply('смотрю фото 👀');
 
     const photo = ctx.message.photo[ctx.message.photo.length - 1];
-    const file = await ctx.api.getFile(photo.file_id);
+    if (!photo) {
+      throw new Error('No photo found in message');
+    }
+
+    const fileId = photo.file_id;
+    const file = await ctx.api.getFile(fileId);
+
+    if (!file.file_path) {
+      throw new Error('File path is missing from Telegram API response');
+    }
+
     const fileUrl = `https://api.telegram.org/file/bot${config.BOT_TOKEN}/${file.file_path}`;
 
-    const base64Data = await getFileAsBase64(fileUrl);
-    const analysis = await analyzeImage(base64Data);
+    // Determine mime type from file path extension
+    const extension = file.file_path.split('.').pop().toLowerCase();
+    const mimeType = extension === 'png' ? 'image/png' : 'image/jpeg';
 
+    await ctx.api.editMessageText(ctx.chat.id, statusMsg.message_id, 'собираю pinterest board ✨');
+
+    const base64Data = await getFileAsBase64(fileUrl);
+
+    await ctx.api.editMessageText(ctx.chat.id, statusMsg.message_id, 'думаю над образом…');
+
+    const analysis = await analyzeImage(base64Data, mimeType);
+
+    // Delete status message and send analysis
+    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
     await ctx.reply(analysis);
   } catch (error) {
-    console.error('Photo Analysis Error:', error);
-    await ctx.reply(
-      'Ой, что-то пошло не так при анализе фото... 😔 Попробуй еще раз или отправь другое фото, я обязательно справлюсь!'
-    );
+    console.error('--- PHOTO ANALYSIS ERROR ---');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    if (error.response) {
+      console.error('Error response:', JSON.stringify(error.response, null, 2));
+    }
+    console.error('---------------------------');
+
+    const errorText = 'фото не прочиталось 😭\nпопробуй другое, лучше при дневном свете';
+
+    if (statusMsg) {
+      try {
+        await ctx.api.editMessageText(ctx.chat.id, statusMsg.message_id, errorText);
+      } catch (editError) {
+        await ctx.reply(errorText);
+      }
+    } else {
+      await ctx.reply(errorText);
+    }
   }
 };
 
