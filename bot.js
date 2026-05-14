@@ -7,7 +7,7 @@ const { textHandler } = require('./handlers/text.handler');
 const { callbackHandler } = require('./handlers/callback.handler');
 const { astrologyHandler, matrixHandler } = require('./handlers/entertainment.handler');
 const { wbSearchHandler } = require('./handlers/shop.handler');
-const { premiumHandler } = require('./handlers/premium.handler');
+const { premiumHandler } = require('./premium/premium.handler');
 
 // Инициализация бота
 const bot = new Bot(config.BOT_TOKEN);

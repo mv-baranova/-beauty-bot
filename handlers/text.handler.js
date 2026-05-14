@@ -1,6 +1,6 @@
-const { generateTextResponse, generateWithPrompt } = require('../services/gemini.service');
+const { generateTextResponse, generateWithPrompt } = require('../ai/gemini.service');
 const { IMAGE_GEN_PROMPT } = require('../prompts/stylist');
-const { generateImage } = require('../services/image.service');
+const { generateImage } = require('../image/image.service');
 const { BUTTONS, profileHandler, styleHandler, memoryHandler } = require('./menu.handler');
 const { handleAstrologyInput, handleMatrixInput } = require('./entertainment.handler');
 

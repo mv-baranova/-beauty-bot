@@ -1,6 +1,6 @@
-const { generateTextResponse, generateWithPrompt } = require('../services/gemini.service');
+const { generateTextResponse, generateWithPrompt } = require('../ai/gemini.service');
 const { IMAGE_GEN_PROMPT } = require('../prompts/stylist');
-const { generateImage } = require('../services/image.service');
+const { generateImage } = require('../image/image.service');
 
 /**
  * Handles callback queries from inline keyboards.
@@ -64,27 +64,32 @@ async function callbackHandler(ctx) {
       case 'save':
         return await ctx.reply('сохранила твой разбор в style journal! 📸');
       case 'build_look': prompt = 'собери мне полный образ'; break;
+      case 'visualize':
+        return await handleVisualization(ctx, 'создай образ на основе моего профиля');
     }
 
-    const statusMsg = await ctx.reply('думаю... ✨');
-    const response = await generateTextResponse(prompt, ctx);
-    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
-    return await ctx.reply(response);
+    if (prompt) {
+      const statusMsg = await ctx.reply('думаю... ✨');
+      const response = await generateTextResponse(prompt, ctx);
+      await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+      return await ctx.reply(response);
+    }
   }
 
-  // Visualizations/Try-on
-  if (data === 'action_visualize') {
+  // Visualization specific actions
+  if (data.startsWith('visual_')) {
     await ctx.answerCallbackQuery();
-    const statusMsg = await ctx.reply('создаю visual board... ✨');
-    try {
-      const visualPrompt = await generateWithPrompt(IMAGE_GEN_PROMPT, 'создай образ на основе моего профиля', ctx);
-      const imageUrl = await generateImage(visualPrompt);
-      await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
-      return await ctx.replyWithPhoto(imageUrl, { caption: 'твой персональный visual board ☁️' });
-    } catch (e) {
-      await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
-      return await ctx.reply('не удалось создать образ сейчас 😭');
+    const type = data.replace('visual_', '');
+    let visualTask = '';
+
+    switch(type) {
+      case 'pinterest': visualTask = 'создай pinterest aesthetic moodboard для моего типажа'; break;
+      case 'try_on': visualTask = 'примири на меня новый стиль в духе soft luxury'; break;
+      case 'shot': visualTask = 'сделай fashion editorial shot с моим участием'; break;
+      case 'moodboard': visualTask = 'собери визуальный moodboard на неделю'; break;
     }
+
+    return await handleVisualization(ctx, visualTask);
   }
 
   // Premium actions
@@ -101,6 +106,32 @@ async function callbackHandler(ctx) {
   }
 
   await ctx.answerCallbackQuery();
+}
+
+/**
+ * Shared logic for visualization tasks
+ */
+async function handleVisualization(ctx, taskDescription) {
+  // Premium Gating
+  if (!ctx.session.isPremium) {
+     return await ctx.reply('✨ визуализации доступны только в PREMIUM версии.\n\nздесь я создаю для тебя персональные образы, moodboard и провожу виртуальную примерку 🤍\n\nнажми 💎 тарифы в меню, чтобы разблокировать эти функции.', {
+       reply_markup: {
+         inline_keyboard: [[{ text: '💎 разблокировать PREMIUM', callback_data: 'premium_buy_premium' }]]
+       }
+     });
+  }
+
+  const statusMsg = await ctx.reply('создаю visual board... ✨');
+  try {
+    const visualPrompt = await generateWithPrompt(IMAGE_GEN_PROMPT, taskDescription, ctx);
+    const imageUrl = await generateImage(visualPrompt);
+    await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+    return await ctx.replyWithPhoto(imageUrl, { caption: 'твой персональный visual board ☁️' });
+  } catch (e) {
+    console.error('Visualization Error:', e);
+    if (statusMsg) await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+    return await ctx.reply('не удалось создать образ сейчас 😭 попробуй еще раз');
+  }
 }
 
 module.exports = {

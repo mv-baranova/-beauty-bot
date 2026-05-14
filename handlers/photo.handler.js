@@ -1,5 +1,5 @@
 const { getFileAsBase64 } = require('../utils/image');
-const { analyzeImage } = require('../services/gemini.service');
+const { analyzeImage } = require('../ai/gemini.service');
 const config = require('../config');
 const keyboards = require('../utils/keyboards');
 
@@ -48,9 +48,18 @@ const photoHandler = async (ctx) => {
 
     // Delete status message and send analysis with inline keyboard
     await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);
+
     await ctx.reply(analysis, {
       reply_markup: keyboards.postAnalysis,
     });
+
+    // Suggest visualization
+    setTimeout(async () => {
+      await ctx.reply('хочешь покажу как это может выглядеть в жизни? ✨', {
+        reply_markup: keyboards.visualActions
+      });
+    }, 1000);
+
   } catch (error) {
     console.error('--- PHOTO ANALYSIS ERROR ---');
     console.error('Error message:', error.message);

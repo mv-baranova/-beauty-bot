@@ -1,6 +1,6 @@
 const { Keyboard } = require('grammy');
 const keyboards = require('../utils/keyboards');
-const { getProfileSummary } = require('../services/profile.service');
+const { getProfileSummary } = require('../memory/profile.service');
 
 const BUTTONS = {
   PHOTO_ANALYSIS: '📸 анализ фото',
@@ -82,7 +82,7 @@ const styleHandler = async (ctx) => {
 };
 
 const memoryHandler = async (ctx) => {
-  const { generateTextResponse } = require('../services/gemini.service');
+  const { generateTextResponse } = require('../ai/gemini.service');
   const statusMsg = await ctx.reply('вспоминаю всё, что мы обсуждали... 🧠');
   const response = await generateTextResponse('расскажи кратко, что ты помнишь обо мне, моих предпочтениях и советах, которые ты давала. будь как подружка.', ctx);
   await ctx.api.deleteMessage(ctx.chat.id, statusMsg.message_id);

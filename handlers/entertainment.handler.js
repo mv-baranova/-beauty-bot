@@ -1,6 +1,6 @@
-const { generateWithPrompt } = require('../services/gemini.service');
+const { generateWithPrompt } = require('../ai/gemini.service');
 const { ASTROLOGY_PROMPT } = require('../prompts/stylist');
-const { updateProfile } = require('../services/profile.service');
+const { updateProfile } = require('../memory/profile.service');
 
 /**
  * Multi-step data collection for astrology.
